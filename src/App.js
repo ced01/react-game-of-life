@@ -12,28 +12,35 @@ class App extends Component {
   gridwidth = 17;
   gridheight = 17;
 
+  gridwidthMinusOne = this.gridwidth - 1;
+  gridheightMinusOne = this.gridheight - 1;
+
+  cells = [];
+
   constructor(props) {
     super(props);
     this.state = {
-    cells: this.initialiseCell([{x:4,y:3},{x:3,y:3},{x:2,y:3},{x:5,y:3},{x:5,y:2},{x:2,y:5}]),
+    cells: this.initialiseCell([{x:4,y:1},{x:3,y:1},{x:2,y:1}]),
     arrayOfRows : []
     };
   }
 
   componentDidMount() {
     this.display();
+    
     this.timerID = setInterval(
       () => {
-        this.analyseCell();
-        this.setState({arrayOfRows : []});
-        this.display();
+        if(this.nbSimulation !== 3){
+          this.setState({arrayOfRows : []});
+          this.analyseCell();
+          this.display();
+        }
+        if(this.nbSimulation === 15 ){
+          clearInterval(this.timerID);
+        }
       },
-      10
+      1000
     );
-
-    /*if(this.nbSimulation === 15 ){
-      clearInterval(this.timerID);
-    }*/
   }
 
   componentWillUnmount() {
@@ -51,114 +58,145 @@ class App extends Component {
   }
 
   initialiseCell(indexes){
-    let cs = this.fillCellsPos();
-    let c = 0, ind = 0;
+    let cs = this.fillCellsPos(),
+        c = 0, 
+        ind = 0, 
+        cell = null, 
+        posx = 0, 
+        posy = 0,
+        cplusgridwMinusOne = 0, 
+        cplusgridwPlusOne = 0, 
+        cminusgridwMinusOne = 0, 
+        nbOfCells = 0, 
+        cminusgridwPlusOne = 0,
+        cplusOne =0, 
+        cminusOne = 0,
+        indexPosX = 0,
+        indexPosY = 0;
+
+    // Initialise grid cells with indexes 
 
     indexes.forEach(i => {
+      indexPosX = i.x;
+      indexPosY = i.y;
+      
       for(c = 0; c < cs.length; c++){
-        if(i.x === cs[c].pos.x && i.y === cs[c].pos.y){
-            cs[c].alive = true;
+        cell = cs[c];
+        posx = cell.pos.x;
+        posy = cell.pos.y;
+        
+        if(indexPosX === posx && indexPosY === posy){
+          cell.alive  = true;
         }
       }
     });
-    ind = 0;
+
+    // Initialise grid cells with indexes 
+
     for(c = 0; c < cs.length; c++){
-      for(ind = c-1 ;ind < c + 1; ind++){
-        if(ind > 0 && (ind < this.gridwidth * this.gridheight)) {
-          if(cs[c].alive  && ind !== c){
-            cs[ind].nbOfCellsAliveNearMe++;
-          }
+      cell = cs[c];
+      cplusgridwMinusOne = c + this.gridwidth - 1;
+      cplusgridwPlusOne = c + this.gridwidth + 1;
+      cminusgridwMinusOne = c - this.gridwidth - 1;
+      cminusgridwPlusOne = c - this.gridwidth + 1;
+      nbOfCells = this.gridwidth * this.gridheight;
+      cminusOne = c - 1;
+      cplusOne = c + 1;
+      //debugger;
+      for(ind = cminusOne ;ind <= cplusOne; ind++){
+        if(ind > 0 && (ind < nbOfCells) && cs[ind].alive && ind !== c) {
+            cs[c].nbOfCellsAliveNearMe = cs[c].nbOfCellsAliveNearMe + 1;
+           // console.log(cs[c]);
         }
       }
-      ind = 0;
-      for(ind = c + this.gridwidth - 1 ;ind < c + this.gridwidth + 1; ind++){
-          if(ind < this.gridwidth * this.gridheight){
-            if(cs[c].alive){   
-              cs[ind].nbOfCellsAliveNearMe++;
-             // debugger;
-            }
+      for(ind = cplusgridwMinusOne ;ind <= cplusgridwPlusOne; ind++){
+          if(ind < nbOfCells && cs[ind].alive){
+              cs[c].nbOfCellsAliveNearMe = cs[c].nbOfCellsAliveNearMe + 1;
           }
       }
-      ind = 0;
-      for(ind = (c - this.gridwidth - 1);ind < (c - this.gridwidth + 1); ind++){
-        if(ind > 0){
-          if(cs[c].alive) {
-            cs[ind].nbOfCellsAliveNearMe++;
-          }
-        }  
+      for(ind = cminusgridwMinusOne;ind <= cminusgridwPlusOne; ind++){
+        if(ind > 0 && cs[ind].alive){
+          cs[c].nbOfCellsAliveNearMe = cs[c].nbOfCellsAliveNearMe + 1;
+        } 
       }
     }
-    
     return cs;
   }
 
   analyseCell(){
-    let cs = this.state.cells;
-    let c = 0, ind = 0;
-    let arr = [];
-      for(c = 0; c < cs.length; c++){
-        if(!cs[c].alive){
-          if(cs[c].nbOfCellsAliveNearMe === 2){
-            cs[c].alive = true;
-            for(ind = c-1 ;ind < c + 1; ind++){
-              if(ind > 0 && ind !== c && ind < this.gridwidth * this.gridheight){
-                cs[ind].nbOfCellsAliveNearMe = cs[ind].nbOfCellsAliveNearMe + 1;
-              }
+    let c = 0, 
+        ind = 0,
+        arr = [],
+        cell = null,
+        posx = 0, 
+        posy = 0,
+        cplusgridwMinusOne = 0, 
+        cplusgridwPlusOne = 0, 
+        cminusgridwMinusOne = 0, 
+        nbOfCells = 0, 
+        cplusOne =0, 
+        cminusOne = 0,
+        cminusgridwPlusOne = 0;
+
+        this.cells = this.state.cells;
+
+        for(c = 0; c < this.cells.length; c++){
+          cell = this.cells[c];
+          posx = cell.pos.x;
+          posy = cell.pos.y;
+          cplusgridwMinusOne = c + this.gridwidth - 1;
+          cplusgridwPlusOne = c + this.gridwidth + 1;
+          cminusgridwMinusOne = c - this.gridwidth - 1;
+          cminusgridwPlusOne = c - this.gridwidth + 1;
+          nbOfCells = this.gridwidth * this.gridheight;
+          cminusOne = c - 1;
+          cplusOne = c + 1;
+        
+          if(this.cells[c].alive){
+            if(this.cells[c].nbOfCellsAliveNearMe < 2 || this.cells[c].nbOfCellsAliveNearMe > 3 /*|| posx === this.gridwidthMinusOne || posy === this.gridwidthMinusOne || posx === 0 || posy === 0*/){
+              this.cells[c].alive = false;
             }
-            ind = 0;
-            for(ind = c + this.gridwidth - 1 ;ind < c + this.gridwidth + 1; ind++){
-              if(ind < this.gridwidth * this.gridheight){
-                cs[ind].nbOfCellsAliveNearMe = cs[ind].nbOfCellsAliveNearMe + 1;
-              }
-            }
-            ind = 0;
-            for(ind = c - this.gridwidth -1 ;ind < c - this.gridwidth + 1; ind++){
-              if(ind > 0){
-                cs[ind].nbOfCellsAliveNearMe = cs[ind].nbOfCellsAliveNearMe + 1;
-              }
-            }
-          }
-        } else {
-          if(cs[c].nbOfCellsAliveNearMe < 2 || cs[c].nbOfCellsAliveNearMe > 3 || cs[c].pos.x === this.gridwidth - 1 || cs[c].pos.y === this.gridheight - 1 || cs[c].pos.x === 0 || cs[c].pos.y === 0){
-            cs[c].alive = false;
-            for(ind = c-1 ;(ind < c + 1) && ind !== c; ind++){
-              if(ind > 0 && ind < this.gridwidth * this.gridheight){
-                if(cs[ind].nbOfCellsAliveNearMe > 0){
-                  cs[ind].nbOfCellsAliveNearMe = cs[ind].nbOfCellsAliveNearMe - 1;
-                }else{
-                  cs[ind].nbOfCellsAliveNearMe = 0;
-                }
-              }
-            }
-            ind = 0;
-            for(ind = c - this.gridwidth -1 ; ind < c - this.gridwidth + 1; ind++){
-              if(ind > 0 && ind < this.gridwidth * this.gridheight){
-                if(cs[ind].nbOfCellsAliveNearMe > 0){
-                  cs[ind].nbOfCellsAliveNearMe = cs[ind].nbOfCellsAliveNearMe - 1;
-                }else{
-                  cs[ind].nbOfCellsAliveNearMe = 0;
-                }
-              }
-            }
-            ind = 0;
-            for(ind = c - this.gridwidth -1 ;ind < c - this.gridwidth + 1; ind++){
-              if(ind > 0 && ind < this.gridwidth * this.gridheight){
-                if(cs[ind].nbOfCellsAliveNearMe > 0){
-                  cs[ind].nbOfCellsAliveNearMe = cs[ind].nbOfCellsAliveNearMe - 1;
-                }else{
-                  cs[ind].nbOfCellsAliveNearMe = 0;
-                }
-              }
+          } else {
+            if(this.cells[c].nbOfCellsAliveNearMe === 3){
+              this.cells[c].alive = true;
             }
           }
         }
-       // console.log(cs[c]);
-        arr.push(cs[c]);
-      }
-      this.setState({cells:arr});
+        for(c = 0; c < this.cells.length; c++){
+          cell = this.cells[c];
+          posx = cell.pos.x;
+          posy = cell.pos.y;
+          cplusgridwMinusOne = c + this.gridwidth - 1;
+          cplusgridwPlusOne = c + this.gridwidth + 1;
+          cminusgridwMinusOne = c - this.gridwidth - 1;
+          cminusgridwPlusOne = c - this.gridwidth + 1;
+          nbOfCells = this.gridwidth * this.gridheight;
+          cminusOne = c - 1;
+          cplusOne = c + 1;
+
+          this.cells[c].nbOfCellsAliveNearMe = 0;
+
+          for(ind = cminusOne ;ind <= cplusOne; ind++){
+            if(ind > 0 && (ind < nbOfCells) && this.cells[ind].alive && ind !== c) {
+              this.cells[c].nbOfCellsAliveNearMe = this.cells[c].nbOfCellsAliveNearMe + 1;
+              console.log(this.cells[c]);
+            }
+          }
+          for(ind = cplusgridwMinusOne ;ind <= cplusgridwPlusOne; ind++){
+              if(ind < nbOfCells && this.cells[ind].alive){
+                this.cells[c].nbOfCellsAliveNearMe = this.cells[c].nbOfCellsAliveNearMe + 1;
+              }
+          }
+          for(ind = cminusgridwMinusOne;ind <= cminusgridwPlusOne; ind++){
+            if(ind > 0 && this.cells[ind].alive){
+              this.cells[c].nbOfCellsAliveNearMe = this.cells[c].nbOfCellsAliveNearMe + 1;
+            } 
+          }
+        }
+
+      this.setState({cells:this.cells});
       console.log("Simulation ==> "+ this.nbSimulation);
       this.nbSimulation++;
-     
   }
 
   display(){
@@ -166,11 +204,13 @@ class App extends Component {
     let id = 0, arr = [], cell = null;
     //console.log(arrayOfRows);
     this.setState({arrayOfRows : this.state.cells.map(c => {
-      cell = <Cell key={id} posx={ c.pos.x } posy={ c.pos.y } alive={c.alive}/>;
-      id++;
-      arr.push(cell);
-      return arr;
-    })});
+        arr=[];
+        cell = <Cell key={id} posx={ c.pos.x } posy={ c.pos.y } alive={c.alive}/>;
+        id++;
+        arr.push(cell);
+        return arr;
+      })
+    });
   }
 
   render() {
