@@ -9,7 +9,7 @@
 
 .wrapper {
     display: grid;
-    grid-template-columns: 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px;
+    grid-template-columns: 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px;
   }
   * {box-sizing: border-box;}
   .wrapper {

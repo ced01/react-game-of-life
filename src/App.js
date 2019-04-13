@@ -7,20 +7,33 @@ import Cell from './components/Cell/Cell';
 class App extends Component {
 
   timerID = null;
+  nbTotalOfSimulation = 80;
   nbSimulation = 0;
 
-  gridwidth = 17;
-  gridheight = 17;
+  gridwidth = 50;
+  gridheight = 40;
+
+  middlewidth = this.gridwidth/2;
+  middleheight = this.gridheight/2;
 
   gridwidthMinusOne = this.gridwidth - 1;
   gridheightMinusOne = this.gridheight - 1;
+
+  setOfInitialState = [
+                       [{x:this.middlewidth-1,y:this.middleheight},{x:this.middlewidth,y:this.middleheight},{x:this.middlewidth+1,y:this.middleheight}],
+                       [{x:this.middlewidth-2,y:this.middleheight},{x:this.middlewidth-1,y:this.middleheight},{x:this.middlewidth,y:this.middleheight},{x:this.middlewidth+1,y:this.middleheight}],
+                       [{x:this.middlewidth-2,y:this.middleheight},{x:this.middlewidth-1,y:this.middleheight},{x:this.middlewidth,y:this.middleheight},{x:this.middlewidth+1,y:this.middleheight},{x:this.middlewidth+2,y:this.middleheight}],
+                       [{x:this.middlewidth + 3,y:this.middleheight},{x:this.middlewidth + 2,y:this.middleheight},{x:this.middlewidth + 1,y:this.middleheight},{x:this.middlewidth,y:this.middleheight-1},{x:this.middlewidth,y:this.middleheight},{x:this.middlewidth-1,y:this.middleheight}],
+                       [{x:this.middlewidth-1,y:this.middleheight+1},{x:this.middlewidth,y:this.middleheight+1},{x:this.middlewidth,y:this.middleheight},{x:this.middlewidth+1,y:this.middleheight},{x:this.middlewidth+1,y:this.middleheight-1},{x:this.middlewidth+2,y:this.middleheight-1}],
+                       [{x:this.middlewidth,y:this.middleheight+1},{x:this.middlewidth-1,y:this.middleheight},{x:this.middlewidth,y:this.middleheight},{x:this.middlewidth,y:this.middleheight-1},{x:this.middlewidth+1,y:this.middleheight-1}]
+                      ];
 
   cells = [];
 
   constructor(props) {
     super(props);
     this.state = {
-    cells: this.initialiseCell([{x:4,y:1},{x:3,y:1},{x:2,y:1}]),
+    cells: this.initialiseCell(this.setOfInitialState[this.setOfInitialState.length - 1]),
     arrayOfRows : []
     };
   }
@@ -30,16 +43,16 @@ class App extends Component {
     
     this.timerID = setInterval(
       () => {
-        if(this.nbSimulation !== 3){
+        //if(this.nbSimulation !== this.nbTotalOfSimulation){
           this.setState({arrayOfRows : []});
           this.analyseCell();
           this.display();
-        }
-        if(this.nbSimulation === 15 ){
+       //}
+       /* if(this.nbSimulation === this.nbTotalOfSimulation ){
           clearInterval(this.timerID);
-        }
+        }*/
       },
-      1000
+      0.0001
     );
   }
 
@@ -89,9 +102,7 @@ class App extends Component {
           cell.alive  = true;
         }
       }
-    });
-
-    // Initialise grid cells with indexes 
+    }); 
 
     for(c = 0; c < cs.length; c++){
       cell = cs[c];
@@ -102,7 +113,7 @@ class App extends Component {
       nbOfCells = this.gridwidth * this.gridheight;
       cminusOne = c - 1;
       cplusOne = c + 1;
-      //debugger;
+    
       for(ind = cminusOne ;ind <= cplusOne; ind++){
         if(ind > 0 && (ind < nbOfCells) && cs[ind].alive && ind !== c) {
             cs[c].nbOfCellsAliveNearMe = cs[c].nbOfCellsAliveNearMe + 1;
@@ -126,7 +137,6 @@ class App extends Component {
   analyseCell(){
     let c = 0, 
         ind = 0,
-        arr = [],
         cell = null,
         posx = 0, 
         posy = 0,
@@ -141,7 +151,7 @@ class App extends Component {
         this.cells = this.state.cells;
 
         for(c = 0; c < this.cells.length; c++){
-          cell = this.cells[c];
+          cell = this.state.cells[c];
           posx = cell.pos.x;
           posy = cell.pos.y;
           cplusgridwMinusOne = c + this.gridwidth - 1;
@@ -153,7 +163,7 @@ class App extends Component {
           cplusOne = c + 1;
         
           if(this.cells[c].alive){
-            if(this.cells[c].nbOfCellsAliveNearMe < 2 || this.cells[c].nbOfCellsAliveNearMe > 3 /*|| posx === this.gridwidthMinusOne || posy === this.gridwidthMinusOne || posx === 0 || posy === 0*/){
+            if(this.cells[c].nbOfCellsAliveNearMe < 2 || this.cells[c].nbOfCellsAliveNearMe > 3 || posx === this.gridwidthMinusOne || posy === this.gridwidthMinusOne || posx === 0 || posy === 0){
               this.cells[c].alive = false;
             }
           } else {
@@ -179,7 +189,7 @@ class App extends Component {
           for(ind = cminusOne ;ind <= cplusOne; ind++){
             if(ind > 0 && (ind < nbOfCells) && this.cells[ind].alive && ind !== c) {
               this.cells[c].nbOfCellsAliveNearMe = this.cells[c].nbOfCellsAliveNearMe + 1;
-              console.log(this.cells[c]);
+              //console.log(this.cells[c]);
             }
           }
           for(ind = cplusgridwMinusOne ;ind <= cplusgridwPlusOne; ind++){
