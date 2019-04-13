@@ -7,7 +7,7 @@ import Cell from './components/Cell/Cell';
 class App extends Component {
 
   timerID = null;
-  nbTotalOfSimulation = 20;
+  nbTotalOfSimulation = 50;
   nbSimulation = 0;
 
   gridwidth = 70;
@@ -26,6 +26,7 @@ class App extends Component {
                        [{x:this.middlewidth + 3,y:this.middleheight},{x:this.middlewidth + 2,y:this.middleheight},{x:this.middlewidth + 1,y:this.middleheight},{x:this.middlewidth,y:this.middleheight-1},{x:this.middlewidth,y:this.middleheight},{x:this.middlewidth-1,y:this.middleheight}],
                        [{x:this.middlewidth-1,y:this.middleheight+1},{x:this.middlewidth,y:this.middleheight+1},{x:this.middlewidth,y:this.middleheight},{x:this.middlewidth+1,y:this.middleheight},{x:this.middlewidth+1,y:this.middleheight-1},{x:this.middlewidth+2,y:this.middleheight-1}],
                        [{x:this.middlewidth,y:this.middleheight+1},{x:this.middlewidth-1,y:this.middleheight},{x:this.middlewidth,y:this.middleheight},{x:this.middlewidth,y:this.middleheight-1},{x:this.middlewidth+1,y:this.middleheight-1}]
+                       
                       ];
 
   cells = [];
@@ -33,7 +34,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-    cells: this.initialiseCell(this.setOfInitialState[0/*this.setOfInitialState.length - 1*/]),
+    cells: this.initialiseCell([]),
     arrayOfRows : []
     };
   }
@@ -43,14 +44,14 @@ class App extends Component {
     
     this.timerID = setInterval(
       () => {
-        if(this.nbSimulation !== this.nbTotalOfSimulation){
+       // if(this.nbSimulation !== this.nbTotalOfSimulation){
           this.setState({arrayOfRows : []});
           this.analyseCell();
           this.display();
-       }
+       /*}
         if(this.nbSimulation === this.nbTotalOfSimulation ){
           clearInterval(this.timerID);
-        }
+        }*/
       },
       1
     );
