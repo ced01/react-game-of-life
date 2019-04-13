@@ -7,10 +7,10 @@ import Cell from './components/Cell/Cell';
 class App extends Component {
 
   timerID = null;
-  nbTotalOfSimulation = 80;
+  nbTotalOfSimulation = 20;
   nbSimulation = 0;
 
-  gridwidth = 50;
+  gridwidth = 70;
   gridheight = 40;
 
   middlewidth = this.gridwidth/2;
@@ -33,7 +33,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-    cells: this.initialiseCell(this.setOfInitialState[this.setOfInitialState.length - 1]),
+    cells: this.initialiseCell(this.setOfInitialState[0/*this.setOfInitialState.length - 1*/]),
     arrayOfRows : []
     };
   }
@@ -43,16 +43,16 @@ class App extends Component {
     
     this.timerID = setInterval(
       () => {
-        //if(this.nbSimulation !== this.nbTotalOfSimulation){
+        if(this.nbSimulation !== this.nbTotalOfSimulation){
           this.setState({arrayOfRows : []});
           this.analyseCell();
           this.display();
-       //}
-       /* if(this.nbSimulation === this.nbTotalOfSimulation ){
+       }
+        if(this.nbSimulation === this.nbTotalOfSimulation ){
           clearInterval(this.timerID);
-        }*/
+        }
       },
-      0.0001
+      1
     );
   }
 
@@ -163,11 +163,11 @@ class App extends Component {
           cplusOne = c + 1;
         
           if(this.cells[c].alive){
-            if(this.cells[c].nbOfCellsAliveNearMe < 2 || this.cells[c].nbOfCellsAliveNearMe > 3 || posx === this.gridwidthMinusOne || posy === this.gridwidthMinusOne || posx === 0 || posy === 0){
+            if((this.cells[c].nbOfCellsAliveNearMe < 2 || this.cells[c].nbOfCellsAliveNearMe > 3) && (posx !== this.gridwidthMinusOne && posy !== this.gridheightMinusOne && posx !== 0 && posy !== 0)){
               this.cells[c].alive = false;
             }
           } else {
-            if(this.cells[c].nbOfCellsAliveNearMe === 3){
+            if(this.cells[c].nbOfCellsAliveNearMe === 3 || posx === this.gridwidthMinusOne || posy === this.gridheightMinusOne || posx === 0 || posy === 0){
               this.cells[c].alive = true;
             }
           }
