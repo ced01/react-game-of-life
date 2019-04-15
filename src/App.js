@@ -160,14 +160,27 @@ class App extends Component {
         if(nbOfCellsAliveNearMe === 3 /*|| posx === gwmo || posy === ghmo || posx === 0 || posy === 0*/){
           cell.alive = true;
         }
-       if(cellClicked !== null){
-        if(c-1 > 0 && c+1 < nbOfCells){
-        for(ind = cellClicked-1; ind <= cellClicked+1 ; ind++){
-            cells[ind].alive = true;
-          } 
+        if(cellClicked !== null){
+          if(c-1 > 0 && c+1 < nbOfCells){
+            if(cellClicked){
+
+              for(ind = cellClicked-1; ind <= cellClicked+1 ; ind++) {
+                cells[ind].alive = true;
+                if(ind === cellClicked + 1){
+                  if(ind + this.gridwidth < nbOfCells && !cells[ind + this.gridwidth].alive){
+                    cells[ind + this.gridwidth].alive = true;
+                  }
+                }
+                if(ind === cellClicked){
+                  if(ind + 2*this.gridwidth < nbOfCells && !cells[ind + 2*this.gridwidth].alive){
+                    cells[ind + 2*this.gridwidth].alive = true;
+                  }
+                }
+              } 
+            }
+          }
+          this.cellClicked = null;
         }
-        this.cellClicked = null;
-       }
       }
       //console.log(c);
     }
