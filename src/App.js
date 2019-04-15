@@ -7,7 +7,7 @@ import Cell from './components/Cell/Cell';
 class App extends Component {
 
   timerID = null;
-  nbTotalOfSimulation = 50;
+  nbTotalOfSimulation = 2;
   nbSimulation = 0;
 
   gridwidth = 70;
@@ -18,6 +18,8 @@ class App extends Component {
 
   gridwidthMinusOne = this.gridwidth - 1;
   gridheightMinusOne = this.gridheight - 1;
+
+  cellClicked = null;
 
   setOfInitialState = [
                        [{x:this.middlewidth-1,y:this.middleheight},{x:this.middlewidth,y:this.middleheight},{x:this.middlewidth+1,y:this.middleheight}],
@@ -36,6 +38,7 @@ class App extends Component {
     this.state = {
     arrayOfRows : []
     };
+    this.addThreeAlignedCells = this.addThreeAlignedCells.bind(this);
   }
 
   componentDidMount() {
@@ -43,13 +46,13 @@ class App extends Component {
     this.display();
     this.timerID = setInterval(
       () => {
-       // if(this.nbSimulation !== this.nbTotalOfSimulation){
+      /*if( this.nbSimulation !== this.nbTotalOfSimulation ){*/
           this.setState({arrayOfRows : []});
           this.analyseCell();
-       /*}
-        if(this.nbSimulation === this.nbTotalOfSimulation ){
-          clearInterval(this.timerID);
-        }*/
+      /*}
+      if(this.nbSimulation === this.nbTotalOfSimulation ){*/
+        /*clearInterval(this.timerID);*/
+      //}
       },
       10
     );
@@ -134,23 +137,39 @@ class App extends Component {
         cell = null,
         posx = 0, 
         posy = 0,
-        nbOfCellsAliveNearMe = 0;
+        nbOfCellsAliveNearMe = 0,
+        gwmo = this.gridwidthMinusOne,
+        ghmo = this.gridheightMinusOne,
+        ind  = 0,
+        nbOfCells = this.gridwidth * this.gridheight,
+        cellClicked = this.cellClicked;
 
     for(c = 0; c < cells.length; c++){
       cell = cells[c];
       nbOfCellsAliveNearMe = cell.nbOfCellsAliveNearMe; 
       posx = cell.pos.x;
       posy = cell.pos.y;
+      ind = 0;
+
 
       if(cell.alive){
-        if((nbOfCellsAliveNearMe < 2 || nbOfCellsAliveNearMe > 3) && (posx !== this.gridwidthMinusOne && posy !== this.gridheightMinusOne && posx !== 0 && posy !== 0)){
+        if((nbOfCellsAliveNearMe < 2 || nbOfCellsAliveNearMe > 3) /*&& (posx !== gwmo && posy !== ghmo && posx !== 0 && posy !== 0)*/){
           cell.alive = false;
         }
       } else {
-        if(nbOfCellsAliveNearMe === 3 || posx === this.gridwidthMinusOne || posy === this.gridheightMinusOne || posx === 0 || posy === 0){
+        if(nbOfCellsAliveNearMe === 3 /*|| posx === gwmo || posy === ghmo || posx === 0 || posy === 0*/){
           cell.alive = true;
         }
+       if(cellClicked !== null){
+        if(c-1 > 0 && c+1 < nbOfCells){
+        for(ind = cellClicked-1; ind <= cellClicked+1 ; ind++){
+            cells[ind].alive = true;
+          } 
+        }
+        this.cellClicked = null;
+       }
       }
+      //console.log(c);
     }
   }
   notifyCells(){
@@ -159,8 +178,8 @@ class App extends Component {
         ind = 0,
         cells = this.cells,
         cell = null,
-        nbOfCells = 0, 
-        cplusOne =0, 
+        nbOfCells = this.gridwidth * this.gridheight, 
+        cplusOne = 0, 
         cminusOne = 0,
         subindexplus = 0,
         subindexminus = 0;
@@ -168,11 +187,8 @@ class App extends Component {
     for(c = 0; c < this.cells.length; c++){
 
       cell = cells[c];
-      nbOfCells = this.gridwidth * this.gridheight;
       cminusOne = c - 1;
       cplusOne = c + 1;
-     
-
       cell.nbOfCellsAliveNearMe = 0;
 
       for(ind = cminusOne ;ind <= cplusOne; ind++){
@@ -180,7 +196,7 @@ class App extends Component {
         subindexplus = ind + this.gridwidth;
         subindexminus = ind - this.gridwidth;
 
-        if(ind > 0 && (ind < nbOfCells) && cells[ind].alive && ind !== c) {
+        if(ind > 0 && ind < nbOfCells && cells[ind].alive && ind !== c) {
           cell.nbOfCellsAliveNearMe++;
         }
         if(subindexplus < nbOfCells && cells[subindexplus].alive){
@@ -195,16 +211,19 @@ class App extends Component {
 
   display(){
     
-    let c = 0, cells = this.cells, cell = null,arr = [],posx = 0, posy = 0;;
+   let cells = this.cells, id = 0; /*cell = null,arr = [],posx = 0, posy = 0, alive = false;*/
 
-    for(c = 0; c < cells.length; c++){
-      cell = cells[c];
-      posx = cell.pos.x;
-      posy = cell.pos.y;
-
-      arr.push(<Cell key={c} posx={ posx } posy={ posy } alive={cell.alive}/>);
-    }
+    let arr = cells.map( c => {
+      let btn = <Cell key={id} posx={ c.pos.x } posy={ c.pos.y } alive={c.alive} onClick={this.addThreeAlignedCells.bind(this,id)}/>
+      id++;
+      return btn
+      }
+    );
     this.setState({arrayOfRows : arr});
+  }
+
+  addThreeAlignedCells(centerIndex){
+    this.cellClicked = centerIndex;
   }
 
   render() {

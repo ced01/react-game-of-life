@@ -19,7 +19,7 @@ export default class Cell extends Component {
     }
 
     render(){
-        return <div style={this.cellStyle} className="cell">  </div>
+        return <button style={this.cellStyle} onClick={this.props.onClick} className="cell"></button>
     }
 
 }
