@@ -13,9 +13,8 @@ export default class Cell extends Component {
 
     cellStyle = {
         border: '1px solid black',
-        borderRadius: '2px',
-        backgroundColor: `${this.props.alive ? '#87CEFA' : 'white'}`,
-        padding: '1em',
+        backgroundColor: `${this.props.alive ? 'black' : '#87CEFA'}`,
+        padding: '0.25em',
         color:'black',
     }
 

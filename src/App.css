@@ -3,16 +3,27 @@
 }
 
 .rowstyle {
-    width:100%;
-    margin-top: 11px;
+  width:100%;
+  margin-top: 11px;
 }
 
 .wrapper {
-    display: grid;
-    grid-template-columns: 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px 35px;
-  }
-  * {box-sizing: border-box;}
-  .wrapper {
-    background-color: white;
-  }
+  display: grid;
+  grid-template-columns: 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px;
+  margin-left:25%;
+  border: 5px solid black;
+  width:700px;
+}
+
+.wrapper {
+  background-color: white;
+}
   
+.simulation-number {
+  border:1px solid black;
+  max-width: 200px;
+  padding: 20px;
+  font-weight: bold;
+  margin: 20px;
+  text-align: center;
+}
