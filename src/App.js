@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
+import { Button } from 'reactstrap';
 import './App.css';
 
 import Cell from './components/Cell/Cell';
+import LWSS from './components/Vessel/LWSS/LWSS';
+import Environement from './components/Environement/Environement';
+
+
 
 
 class App extends Component {
@@ -9,15 +14,16 @@ class App extends Component {
   timerID = null;
   nbTotalOfSimulation = 2;
   nbSimulation = 0;
+  stepForTimer = 5;
+  golIsRunning = false;
+  
+  env = new Environement(70,40,false);
 
-  gridwidth = 70;
-  gridheight = 40;
+  middlewidth = this.env.getWidth()/2;
+  middleheight = this.env.getHeight()/2;
 
-  middlewidth = this.gridwidth/2;
-  middleheight = this.gridheight/2;
-
-  gridwidthMinusOne = this.gridwidth - 1;
-  gridheightMinusOne = this.gridheight - 1;
+  gridwidthMinusOne = this.env.getWidth() - 1;
+  gridheightMinusOne = this.env.getHeight() - 1;
 
   cellClicked = null;
 
@@ -31,55 +37,75 @@ class App extends Component {
                        
                       ];
 
-  cells = this.initialiseCell([0]);
+  cells = this.initialiseCell(this.setOfInitialState[0]);
 
   constructor(props) {
     super(props);
     this.state = {
-    arrayOfRows : []
+    btnState : {
+      btnColor : "success",
+      btnLabel : "RUN"
+    },
+    arrayOfRows : [],
     };
+
     this.addThreeAlignedCells = this.addThreeAlignedCells.bind(this);
   }
 
   componentDidMount() {
-    
     this.display();
-    this.timerID = setInterval(
-      () => {
-      /*if( this.nbSimulation !== this.nbTotalOfSimulation ){*/
-          this.setState({arrayOfRows : []});
-          this.analyseCell();
-      /*}
-      if(this.nbSimulation === this.nbTotalOfSimulation ){*/
-        /*clearInterval(this.timerID);*/
-      //}
-      },
-      10
-    );
+    //this.runGoL();
   }
 
-  componentWillUnmount() {
+  playOneGoL() {
+      this.setState({arrayOfRows : []});
+      this.analyseCell();
+      this.display();
+  }
+
+  runGoL(){
+    this.setState({btnState : {
+      btnColor : "secondary",
+      btnLabel : "STOP"
+    }});
+     
+      this.golIsRunning = true;
+      this.timerID = setInterval(
+        () => {
+        /*if( this.nbSimulation !== this.nbTotalOfSimulation ){*/
+
+            this.playOneGoL();
+        //}
+       /* if(this.nbSimulation === this.nbTotalOfSimulation ){
+          this.pauseGoL();
+        }*/
+        },
+        this.stepForTimer
+      ); 
+    
+  }
+
+  pauseGoL(){
+    this.setState({btnState : {
+      btnColor : "success",
+      btnLabel : "RUN"
+    }});
+    this.golIsRunning = false;
     clearInterval(this.timerID);
   }
 
-  fillCellsPos(){
-    let ih = 0, iw = 0, arr =[];
-    for(ih = 0; ih < this.gridheight; ih++ ) {
-      for(iw = 0; iw < this.gridwidth; iw++ ) {
-        arr.push({alive : false , pos : {x:iw , y:ih}, nbOfCellsAliveNearMe:0})
-      }
-    }
-    return arr;
+  componentWillUnmount() {
+    this.pauseGoL();
   }
 
   initialiseCell(indexes){
-    let cs = this.fillCellsPos(),
+    let cs = this.env.getContent(),
         c = 0, 
         ind = 0, 
         cell = null, 
         posx = 0, 
         posy = 0, 
-        nbOfCells = 0, 
+        nbOfCells = 0,
         cplusOne = 0, 
         cminusOne = 0,
         indexPosX = 0,
@@ -88,6 +114,7 @@ class App extends Component {
     // Initialise grid cells with indexes 
 
     indexes.forEach(i => {
+      //console.log(i);
       indexPosX = i.x;
       indexPosY = i.y;
       
@@ -100,22 +127,23 @@ class App extends Component {
           cell.alive  = true;
         }
       }
-    }); 
+    });
+     
 
     for(c = 0; c < cs.length; c++){
       cell = cs[c];
-      nbOfCells = this.gridwidth * this.gridheight;
+      nbOfCells = this.env.getWidth() * this.env.getHeight();
       cminusOne = c - 1;
       cplusOne = c + 1;
     
       for(ind = cminusOne ;ind <= cplusOne; ind++){
         if(ind > 0 && (ind < nbOfCells) && cs[ind].alive && ind !== c) {
-            cs[c].nbOfCellsAliveNearMe++;
-        }
-        if(ind + this.gridwidth < nbOfCells && cs[ind + this.gridwidth].alive){
           cs[c].nbOfCellsAliveNearMe++;
         }
-        if(ind - this.gridwidth > 0 && cs[ind - this.gridwidth].alive){
+        if(ind + this.env.getWidth() < nbOfCells && cs[ind + this.env.getWidth()].alive){
+          cs[c].nbOfCellsAliveNearMe++;
+        }
+        if(ind - this.env.getWidth() > 0 && cs[ind - this.env.getWidth()].alive){
           cs[c].nbOfCellsAliveNearMe++;;
         } 
       }
@@ -127,7 +155,6 @@ class App extends Component {
 
       this.setCellsAlive();
       this.notifyCells();
-      this.display();
       this.nbSimulation++;
   }
 
@@ -139,19 +166,14 @@ class App extends Component {
         posy = 0,
         nbOfCellsAliveNearMe = 0,
         gwmo = this.gridwidthMinusOne,
-        ghmo = this.gridheightMinusOne,
-        ind  = 0,
-        nbOfCells = this.gridwidth * this.gridheight,
-        cellClicked = this.cellClicked;
+        ghmo = this.gridheightMinusOne;
 
     for(c = 0; c < cells.length; c++){
       cell = cells[c];
       nbOfCellsAliveNearMe = cell.nbOfCellsAliveNearMe; 
       posx = cell.pos.x;
       posy = cell.pos.y;
-      ind = 0;
-
-
+  
       if(cell.alive){
         if((nbOfCellsAliveNearMe < 2 || nbOfCellsAliveNearMe > 3) /*&& (posx !== gwmo && posy !== ghmo && posx !== 0 && posy !== 0)*/){
           cell.alive = false;
@@ -160,29 +182,7 @@ class App extends Component {
         if(nbOfCellsAliveNearMe === 3 /*|| posx === gwmo || posy === ghmo || posx === 0 || posy === 0*/){
           cell.alive = true;
         }
-        if(cellClicked !== null){
-          if(c-1 > 0 && c+1 < nbOfCells){
-            if(cellClicked){
-
-              for(ind = cellClicked-1; ind <= cellClicked+1 ; ind++) {
-                cells[ind].alive = true;
-                if(ind === cellClicked + 1){
-                  if(ind + this.gridwidth < nbOfCells && !cells[ind + this.gridwidth].alive){
-                    cells[ind + this.gridwidth].alive = true;
-                  }
-                }
-                if(ind === cellClicked){
-                  if(ind + 2*this.gridwidth < nbOfCells && !cells[ind + 2*this.gridwidth].alive){
-                    cells[ind + 2*this.gridwidth].alive = true;
-                  }
-                }
-              } 
-            }
-          }
-          this.cellClicked = null;
-        }
       }
-      //console.log(c);
     }
   }
   notifyCells(){
@@ -191,7 +191,7 @@ class App extends Component {
         ind = 0,
         cells = this.cells,
         cell = null,
-        nbOfCells = this.gridwidth * this.gridheight, 
+        nbOfCells = this.env.getWidth() * this.env.getHeight(), 
         cplusOne = 0, 
         cminusOne = 0,
         subindexplus = 0,
@@ -206,8 +206,8 @@ class App extends Component {
 
       for(ind = cminusOne ;ind <= cplusOne; ind++){
 
-        subindexplus = ind + this.gridwidth;
-        subindexminus = ind - this.gridwidth;
+        subindexplus = ind + this.env.getWidth();
+        subindexminus = ind - this.env.getWidth();
 
         if(ind > 0 && ind < nbOfCells && cells[ind].alive && ind !== c) {
           cell.nbOfCellsAliveNearMe++;
@@ -227,7 +227,10 @@ class App extends Component {
    let cells = this.cells, id = 0; /*cell = null,arr = [],posx = 0, posy = 0, alive = false;*/
 
     let arr = cells.map( c => {
-      let btn = <Cell key={id} posx={ c.pos.x } posy={ c.pos.y } alive={c.alive} onClick={this.addThreeAlignedCells.bind(this,id)}/>
+      let btn = <Cell key={id} 
+                      data={ c } 
+                      onClick={this.addThreeAlignedCells.bind(this,id)}
+                />
       id++;
       return btn
       }
@@ -236,13 +239,20 @@ class App extends Component {
   }
 
   addThreeAlignedCells(centerIndex){
-    this.cellClicked = centerIndex;
+    let vessel = new LWSS(this.cells,centerIndex,0,this.env.getWidth());
+    vessel.setOrigin(centerIndex);
+    vessel.create();
+    this.notifyCells();
+    this.display();
   }
 
   render() {
     return (
       <div>
-        <div className="simulation-number"> Simulation N° { this.nbSimulation }</div>
+        <div className="menu">
+          <div className="simulation-number"> Simulation N° { this.nbSimulation }</div>
+          <Button className="btn" outline color={this.state.btnState.btnColor} onClick={() => {this.golIsRunning ?  this.pauseGoL() : this.runGoL()}}>{ this.state.btnState.btnLabel }</Button>
+        </div>
         <div className="wrapper">
           {this.state.arrayOfRows.map(r => r)}
         </div>

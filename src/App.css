@@ -9,10 +9,10 @@
 
 .wrapper {
   display: grid;
-  grid-template-columns: 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px 10px;
-  margin-left:25%;
+  grid-template-columns: 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43% 1.43%;
   border: 5px solid black;
-  width:700px;
+  width: 95%;
+  margin-left: 2.5%;
 }
 
 .wrapper {
@@ -21,9 +21,18 @@
   
 .simulation-number {
   border:1px solid black;
-  max-width: 200px;
-  padding: 20px;
+  padding: 25px 0px 25px 0px;
   font-weight: bold;
-  margin: 20px;
   text-align: center;
+}
+
+.btn {
+  padding: 25px 0px 25px 0px; 
+  margin-left:25px;
+}
+
+.menu {
+  display: grid;
+  grid-template-columns: 35% 65%;
+  margin: 20px;
 }
