@@ -1,17 +1,12 @@
 import React, { Component } from 'react';
 
+import './Cell.css';
+
 export default class Cell extends Component {
-	
 
-    cellStyle = {
-        border: '1px solid black',
-        backgroundColor: `${this.props.data.alive ? 'black' : '#87CEFA'}`,
-        padding: '0.25em',
-        color:'black',
-    }
-
+    
     render(){
-        return <button style={this.cellStyle} onClick={this.props.onClick} className="cell"></button>
+        return <button style={{backgroundColor: `${this.props.data.alive ? '#428bca' : '#ccccff'}`}} onClick={this.props.onClick} className="cell"></button>
     }
 
 }

@@ -1,0 +1,9 @@
+.cell {
+    padding: 0.25em;
+    border: 1px solid black;
+  
+}
+
+.cell:hover {
+    background-color: brown !important;
+}
