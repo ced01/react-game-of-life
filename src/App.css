@@ -9,29 +9,43 @@
 
 .wrapper {
   display: grid;
-  grid-template-columns: 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855% 1.855%;
+  grid-template-columns: repeat(54,1.852%);
   border: 5px solid black;
   width: 98%;
   margin-left: 1%;
-}
-
-.wrapper {
   background-color: white;
 }
+
+@media (max-width: 737px) {
+  .wrapper {
+    grid-template-columns: repeat(40,2.50%);
+  }
+}
+
   
 .simulation-number {
   border:1px solid black;
+  border-radius: 3px;
   padding: 15px 0px 15px 0px;
   font-weight: bold;
   text-align: center;
   width:100%;
   max-height: 75px;
+  margin: 5px;
+  background-color: rgb(204, 204, 255);
+  color:black;
 }
 
 .btn {
   padding: 15px 0px 15px 0px; 
   width:100%;
   max-height: 75px;
+  margin: 5px;
+}
+
+.select-form {
+  margin: 5px;
+  min-height: 55px;
 }
 
 .menu {

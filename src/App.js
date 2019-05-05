@@ -18,7 +18,7 @@ class App extends Component {
   stepForTimer = 10;
   golIsRunning = false;
   
-  env = new Environement(54,54,false);
+  env = window.innerWidth <= 737 ? new Environement(40,40,false) : new Environement(54,54,false);
 
   middlewidth = this.env.getWidth()/2 - 1;
   middleheight = this.env.getHeight()/2 - 1;
@@ -58,7 +58,6 @@ class App extends Component {
 
   componentDidMount() {
     this.display();
-    //this.runGoL();
   }
 
   playOneGoL() {
@@ -125,7 +124,6 @@ class App extends Component {
         posy = cell.pos.y;
         
         if(indexPosX === posx && indexPosY === posy){
-          console.log(posx + " " +posy); 
           cell.alive  = true;
         }
       }
@@ -271,7 +269,6 @@ class App extends Component {
   }
 
   generateFrameOnClick(index){
-    console.log(index);
     /*let vessel = new LWSS(this.cells,centerIndex,0,this.env.getWidth());
     vessel.setOrigin(index);
     vessel.create();*/
@@ -291,17 +288,18 @@ class App extends Component {
   }
 
   render() {
+    
     return (
       <div>
         <Row className="menu">
-          <Col xs="12" sm="2"><div className="simulation-number"> S. N° { this.nbSimulation }</div></Col>
-          <Col xs="12" sm="2"><Button className="btn" outline color={this.state.btnState.btnColor} onClick={() => {this.golIsRunning ?  this.pauseGoL() : this.runGoL()}}>{ this.state.btnState.btnLabel }</Button></Col>
-          <Col xs="12" sm="2"><Button className="btn" outline color="danger" onClick={() => {this.wipeOut()}}>CLEAR</Button></Col>
-          <Col xs="12" sm="2"><Button className="btn" outline color="info" onClick={() => {this.generateRandFrame()}}>RAMDOM</Button></Col>
-          <Col xs="12" sm="2">
+          <Col xs="6" sm="2"><div className="simulation-number"> Game { this.nbSimulation }</div></Col>
+          <Col xs="6" sm="2"><Button className="btn" color={this.state.btnState.btnColor} onClick={() => {this.golIsRunning ?  this.pauseGoL() : this.runGoL()}}>{ this.state.btnState.btnLabel }</Button></Col>
+          <Col xs="6" sm="2"><Button className="btn" color="danger" onClick={() => {this.wipeOut()}}>CLEAR</Button></Col>
+          <Col xs="6" sm="2"><Button className="btn" color="info" onClick={() => {this.generateRandFrame()}}>RAMDOM</Button></Col>
+          <Col xs="6" sm="2">
             <Form> 
               <FormGroup> 
-                <Input type="select" name="select" id="exampleSelect" onChange={(e) => {this.swapForm(e)}}> 
+                <Input className="select-form" type="select" name="select" id="exampleSelect" onChange={(e) => {this.swapForm(e)}}> 
                   <option>0</option>
                   <option>1</option>
                   <option>2</option>
